@@ -1,0 +1,14 @@
+{
+  "name": "miracle",
+  "version": "0.0.1",
+  "description": "Server for deploy test",
+  "author": "Taras Labiak <kissarat@gmail.com>",
+  "private": true,
+  "license": "MIT",
+  "tags": [],
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
