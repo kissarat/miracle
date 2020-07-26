@@ -37,6 +37,9 @@ def index():
     url = request.args.get('url')
     if url:
         visit['url'] = b64decode(url).decode('utf-8')
+    cid = request.args.get('cid')
+    if cid:
+        visit['cid'] = cid
     db.put(visit)
     result = dict(visit)
     result['id'] = id
