@@ -31,9 +31,6 @@ def index():
         visit['city'] = city
         visit['country'] = request.headers.get('x-appengine-country')
     visit['agent'] = request.headers.get('user-agent')
-    referer = request.headers.get('referer')
-    if referer:
-        visit['referer']
     url = request.args.get('url')
     if url:
         visit['url'] = b64decode(url).decode('utf-8')
