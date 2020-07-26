@@ -3,10 +3,12 @@ import datetime
 import logging
 import socket
 import time
+import json
 from datetime import datetime
-from flask import Flask, request
+from flask import Flask, request, Response
 from os import environ
 from google.cloud import datastore
+from base64 import b64decode
 
 db = datastore.Client()
 
@@ -14,7 +16,8 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    visit = datastore.Entity(db.key('visit', int(round(time.time() * 1000))))
+    id = int(round(time.time() * 1000))
+    visit = datastore.Entity(db.key('visit', id))
     forwarded = request.headers.get('x-forwarded-for')
     if forwarded:
         visit['ip'] = forwarded.split(',')[0].strip()
@@ -28,8 +31,25 @@ def index():
         visit['city'] = city
         visit['country'] = request.headers.get('x-appengine-country')
     visit['agent'] = request.headers.get('user-agent')
+    referer = request.headers.get('referer')
+    if referer:
+        visit['referer']
+    url = request.args.get('url')
+    if url:
+        visit['url'] = b64decode(url).decode('utf-8')
     db.put(visit)
-    return visit
+    result = dict(visit)
+    result['id'] = id
+    callback = request.args.get('callback')
+    if callback:
+        return Response(
+            '{}({})'.format(callback, json.dumps(result)),
+            mimetype='application/javascript',
+            headers={
+                'access-control-allow-origin': '*'
+            }
+        )
+    return result
 
 @app.errorhandler(500)
 def server_error(e):
