@@ -1,4 +1,7 @@
 const http = require('http');
+const { name, version } = require('./package');
+
+let started;
 
 const server = http.createServer(function(req, res) {
     let bodySize = 0;
@@ -16,6 +19,8 @@ const server = http.createServer(function(req, res) {
             env: process.env
         };
         res.setHeader('content-type', 'application/json');
+        res.setHeader('server', `${name}/${version}`);
+        res.setHeader('server-started', started);
         res.write(JSON.stringify(json, null, '\t'));
         res.end(function() {
             console.log(`${time} ${req.method} ${req.url}`);
@@ -23,4 +28,6 @@ const server = http.createServer(function(req, res) {
     })
 });
 
-server.listen(process.env.PORT || 8080);
+server.listen(process.env.PORT || 8080, () => {
+    started = new Date().toISOString();
+});
