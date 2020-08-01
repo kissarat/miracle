@@ -14,10 +14,10 @@ db = datastore.Client()
 
 app = Flask(__name__)
 
-@app.route('/')
-def index():
+@app.route('/<name>')
+def index(name):
     id = int(round(time.time() * 1000))
-    visit = datastore.Entity(db.key('visit', id))
+    visit = datastore.Entity(db.key('visit-{}'.format(name), id))
     forwarded = request.headers.get('x-forwarded-for')
     if forwarded:
         visit['ip'] = forwarded.split(',')[0].strip()
